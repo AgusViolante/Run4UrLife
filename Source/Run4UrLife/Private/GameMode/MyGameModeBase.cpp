@@ -3,39 +3,80 @@
 #include "Engine/Engine.h"
 #include "Public/GameMode/MyGameStateBase.h"
 #include "Public/GameMode/MyPlayerState.h"
+#include "TimerManager.h"
 
 AMiGameMode::AMiGameMode()
 {
-	GameStateClass = AMiGameState::StaticClass();
-	PlayerStateClass = AMiPlayerState::StaticClass();
+    GameStateClass = AMiGameState::StaticClass();
+    PlayerStateClass = AMiPlayerState::StaticClass();
+}
+
+void AMiGameMode::BeginPlay()
+{
+    Super::BeginPlay();
+
+    // empieza el timer para que arranque la carrera
+    GetWorldTimerManager().SetTimer(TimerHandle_CuentaRegresiva, this, &AMiGameMode::ActualizarCuentaRegresiva, 1.0f, true);
+}
+
+void AMiGameMode::ActualizarCuentaRegresiva()
+{
+    AMiGameState* GS = GetGameState<AMiGameState>();
+    if (!GS) return;
+
+    if (GS->TiempoCuentaRegresiva > 1)
+    {
+        GS->TiempoCuentaRegresiva--;
+        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, FString::Printf(TEXT("Empieza en: %d"), GS->TiempoCuentaRegresiva));
+    }
+    else
+    {
+        // arranca la carrera cuando termina el timer
+        GetWorldTimerManager().ClearTimer(TimerHandle_CuentaRegresiva);
+        IniciarCarrera();
+    }
+}
+
+void AMiGameMode::IniciarCarrera()
+{
+    AMiGameState* GS = GetGameState<AMiGameState>();
+    if (GS)
+    {
+        GS->bCarreraIniciada = true;
+        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡¡¡YA!!!"));
+        
+    }
 }
 
 void AMiGameMode::JugadorLlegoAMeta(AController* PlayerController)
 {
-	if (!PlayerController) return;
+    if (!PlayerController) return;
 
-	AMiPlayerState* PS = Cast<AMiPlayerState>(PlayerController->PlayerState);
-	AMiGameState* GS = GetGameState<AMiGameState>();
+    AMiPlayerState* PS = Cast<AMiPlayerState>(PlayerController->PlayerState);
+    AMiGameState* GS = GetGameState<AMiGameState>();
 
-	if (PS && !PS->bHaLlegadoAMeta && GS)
-	{
-		// Marcamos que ya llegó para que no se repita
-		PS->bHaLlegadoAMeta = true;
+    if (PS && !PS->bHaLlegadoAMeta && GS && !GS->bCarreraTerminada)
+    {
+        PS->bHaLlegadoAMeta = true;
+        PS->TiempoFinal = GetWorld()->GetTimeSeconds();
+        GS->RankingClasificacion.Add(PS);
 
-		// Se guardan los segundos
-		PS->TiempoFinal = GetWorld()->GetTimeSeconds();
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("¡%s llegó en %fs!"), *PS->GetPlayerName(), PS->TiempoFinal));
+        }
+        
+        FinalizarCarrera();
+    }
+}
 
-		// Se agrega al ranking
-		GS->RankingClasificacion.Add(PS);
-
-		if (GEngine)
-		{
-			GEngine->AddOnScreenDebugMessage(
-				-1,
-				5.f,
-				FColor::Green,
-				FString::Printf(TEXT("¡%s llegó a la meta en %f segundos!"), *PS->GetPlayerName(), PS->TiempoFinal)
-			);
-		}
-	}
+void AMiGameMode::FinalizarCarrera()
+{
+    AMiGameState* GS = GetGameState<AMiGameState>();
+    if (GS)
+    {
+        GS->bCarreraTerminada = true;
+        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, TEXT("CARRERA FINALIZADA. Mostrando Podio..."));
+        
+    }
 }

@@ -4,13 +4,17 @@
 
 AMiGameState::AMiGameState()
 {
-	bReplicates = true;
+	TiempoCuentaRegresiva = 0;
+	bCarreraIniciada = false;
+	bCarreraTerminada = false;
 }
 
 void AMiGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// Se replica el ranking
 	DOREPLIFETIME(AMiGameState, RankingClasificacion);
+	DOREPLIFETIME(AMiGameState, TiempoCuentaRegresiva);
+	DOREPLIFETIME(AMiGameState, bCarreraIniciada);
+	DOREPLIFETIME(AMiGameState, bCarreraTerminada);
 }

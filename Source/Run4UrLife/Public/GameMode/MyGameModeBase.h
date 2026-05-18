@@ -14,4 +14,16 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Carrera")
 	void JugadorLlegoAMeta(AController* PlayerController);
+
+protected:
+	virtual void BeginPlay() override;
+	
+	void ActualizarCuentaRegresiva();
+	
+	void IniciarCarrera();
+	
+	void FinalizarCarrera();
+
+private:
+	FTimerHandle TimerHandle_CuentaRegresiva;
 };
