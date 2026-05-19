@@ -23,6 +23,8 @@ protected:
 	void IniciarCarrera();
 	
 	void FinalizarCarrera();
+	
+	virtual void OnPostLogin(APlayerController* NewPlayer);
 
 private:
 	FTimerHandle TimerHandle_CuentaRegresiva;

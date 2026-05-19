@@ -3,6 +3,7 @@
 #include "Engine/Engine.h"
 #include "Public/GameMode/MyGameStateBase.h"
 #include "Public/GameMode/MyPlayerState.h"
+#include "Run4UrLifeCharacter.h"
 #include "TimerManager.h"
 
 AMiGameMode::AMiGameMode()
@@ -45,6 +46,37 @@ void AMiGameMode::IniciarCarrera()
         GS->bCarreraIniciada = true;
         if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡¡¡YA!!!"));
         
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            APlayerController* PC = It->Get();
+            if (PC)
+            {
+                if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(PC->GetPawn()))
+                {
+                    Personaje->ActivarMovimiento(); // ¡A correr!
+                }
+            }
+        }
+    }
+}
+
+void AMiGameMode::OnPostLogin(APlayerController* NewPlayer)
+{
+    Super::OnPostLogin(NewPlayer);
+
+    // Si la carrera todavía NO empezó, congelamos al jugador que acaba de entrar
+    AMiGameState* GS = GetGameState<AMiGameState>();
+    if (GS && !GS->bCarreraIniciada)
+    {
+        // Esperamos un pequeño frame a que el personaje aparezca (Pawn)
+        if (APawn* PlayerPawn = NewPlayer->GetPawn())
+        {
+            if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(PlayerPawn))
+            {
+                Personaje->DesactivarMovimiento();
+                if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Jugador conectado: Congelado esperando el inicio."));
+            }
+        }
     }
 }
 

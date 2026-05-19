@@ -84,6 +84,14 @@ public:
 	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
+	
+	// Función para congelar al jugador
+	UFUNCTION(BlueprintCallable, Category="Input")
+	void DesactivarMovimiento();
+
+	// Función para descongelar al jugador
+	UFUNCTION(BlueprintCallable, Category="Input")
+	void ActivarMovimiento();
 
 public:
 
