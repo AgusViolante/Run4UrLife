@@ -1,10 +1,10 @@
 #include "Public/GameMode/MyGameStateBase.h"
-
 #include "Net/UnrealNetwork.h"
 
 AMiGameState::AMiGameState()
 {
-	TiempoCuentaRegresiva = 0;
+	bool bReplicated = true;
+	TiempoCuentaRegresiva = 10;
 	bCarreraIniciada = false;
 	bCarreraTerminada = false;
 }

@@ -82,23 +82,50 @@ void AMiGameMode::OnPostLogin(APlayerController* NewPlayer)
 
 void AMiGameMode::JugadorLlegoAMeta(AController* PlayerController)
 {
+  
     if (!PlayerController) return;
 
+ 
     AMiPlayerState* PS = Cast<AMiPlayerState>(PlayerController->PlayerState);
     AMiGameState* GS = GetGameState<AMiGameState>();
 
-    if (PS && !PS->bHaLlegadoAMeta && GS && !GS->bCarreraTerminada)
+    
+    if (PS && !PS->bHaLlegadoAMeta && GS)
     {
+       
         PS->bHaLlegadoAMeta = true;
-        PS->TiempoFinal = GetWorld()->GetTimeSeconds();
+        
+
+        float TiempoDeCarrera = GetWorld()->GetTimeSeconds() - 5.0f;
+        
+      
+        PS->TiempoFinal = TiempoDeCarrera;
+
+   
         GS->RankingClasificacion.Add(PS);
 
+   
+        int32 PosicionOcupada = GS->RankingClasificacion.Num();
+
+    
         if (GEngine)
         {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("¡%s llegó en %fs!"), *PS->GetPlayerName(), PS->TiempoFinal));
+            GEngine->AddOnScreenDebugMessage(
+                -1, 
+                6.f, 
+                FColor::Green, 
+                FString::Printf(TEXT("¡%s cruzó la META! Puesto: #%d | Tiempo: %f segundos"), *PS->GetPlayerName(), PosicionOcupada, TiempoDeCarrera)
+            );
         }
-        
-        FinalizarCarrera();
+
+ 
+        int32 TotalJugadores = GetNumPlayers();
+
+       
+        if (GS->RankingClasificacion.Num() == TotalJugadores)
+        {
+            FinalizarCarrera();
+        }
     }
 }
 
