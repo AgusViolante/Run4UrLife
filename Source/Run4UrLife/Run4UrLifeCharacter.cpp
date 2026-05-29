@@ -12,6 +12,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Run4UrLife.h"
+#include "GameMode/MyGameStateBase.h"
 
 ARun4UrLifeCharacter::ARun4UrLifeCharacter()
 {
@@ -75,6 +76,16 @@ void ARun4UrLifeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 void ARun4UrLifeCharacter::Move(const FInputActionValue& Value)
 {
+	
+	if (GetWorld())
+	{
+		AMiGameState* GS = Cast<AMiGameState>(GetWorld()->GetGameState());
+		//Afewcta el movimiento a los jugadores si estan en la partida
+		if (GS && !GS->bCarreraIniciada)
+		{
+			return; 
+		}
+	}
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 

@@ -40,7 +40,7 @@ void AMiGameMode::ActualizarCuentaRegresiva()
 
 void AMiGameMode::IniciarCarrera()
 {
-    AMiGameState* GS = GetGameState<AMiGameState>();
+    /*AMiGameState* GS = GetGameState<AMiGameState>();
     if (GS)
     {
         GS->bCarreraIniciada = true;
@@ -53,10 +53,19 @@ void AMiGameMode::IniciarCarrera()
             {
                 if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(PC->GetPawn()))
                 {
-                    Personaje->ActivarMovimiento(); // ¡A correr!
+                    Personaje->ActivarMovimiento(); 
                 }
             }
         }
+    }*/
+    AMiGameState* GS = GetGameState<AMiGameState>();
+    if (GS)
+    {
+        // Al volver esto TRUE, Unreal replica el valor por red a absolutamente
+        // todos los personajes autónomos del mundo en un milisegundo.
+        GS->bCarreraIniciada = true;
+        
+        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡¡¡YA!!!"));
     }
 }
 
