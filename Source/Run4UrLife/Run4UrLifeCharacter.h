@@ -92,6 +92,7 @@ public:
 	// Función para descongelar al jugador
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void ActivarMovimiento();
+	void BeginPlay();
 
 public:
 
@@ -100,5 +101,8 @@ public:
 
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+	
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UUserWidget> HUDClass;
 };
 

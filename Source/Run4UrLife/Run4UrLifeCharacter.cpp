@@ -6,6 +6,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputComponent.h"
@@ -163,5 +164,25 @@ void ARun4UrLifeCharacter::ActivarMovimiento()
 		
 		PC->SetIgnoreMoveInput(false);
 		PC->SetIgnoreLookInput(false);
+	}
+}
+
+void ARun4UrLifeCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// Solo creamos el HUD si somos el jugador local (no queremos ver el HUD de otros)
+	if (IsLocallyControlled())
+	{
+		// Buscamos la clase del Widget (esto se puede configurar luego en un BP)
+		// Por ahora, lo más fácil es crear una variable UPROPERTY en el .h para asignar el WBP_HUDCarrera
+		if (HUDClass)
+		{
+			UUserWidget* HUD = CreateWidget<UUserWidget>(GetWorld(), HUDClass);
+			if (HUD)
+			{
+				HUD->AddToViewport();
+			}
+		}
 	}
 }
