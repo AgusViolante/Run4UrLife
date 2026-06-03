@@ -61,8 +61,6 @@ void AMiGameMode::IniciarCarrera()
     AMiGameState* GS = GetGameState<AMiGameState>();
     if (GS)
     {
-        // Al volver esto TRUE, Unreal replica el valor por red a absolutamente
-        // todos los personajes autónomos del mundo en un milisegundo.
         GS->bCarreraIniciada = true;
         
         if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡¡¡YA!!!"));
@@ -73,11 +71,10 @@ void AMiGameMode::OnPostLogin(APlayerController* NewPlayer)
 {
     Super::OnPostLogin(NewPlayer);
 
-    // Si la carrera todavía NO empezó, congelamos al jugador que acaba de entrar
     AMiGameState* GS = GetGameState<AMiGameState>();
     if (GS && !GS->bCarreraIniciada)
     {
-        // Esperamos un pequeño frame a que el personaje aparezca (Pawn)
+
         if (APawn* PlayerPawn = NewPlayer->GetPawn())
         {
             if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(PlayerPawn))

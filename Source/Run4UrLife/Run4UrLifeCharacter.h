@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Public/Publicl/Items/ItemBase.h"
 #include "Logging/LogMacros.h"
 #include "Run4UrLifeCharacter.generated.h"
 
@@ -48,6 +49,9 @@ protected:
 	/** Mouse Look Input Action */
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	UInputAction* UsarItemAction;
 
 public:
 
@@ -58,6 +62,14 @@ protected:
 
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Items")
+	EItemState ItemEquipado;
+	
+	void UsarItemEquipado();
+	
+	UFUNCTION(Server, Reliable)
+	void Server_UsarItemEquipado();
 
 protected:
 
@@ -93,6 +105,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void ActivarMovimiento();
 	void BeginPlay();
+	
+	EItemState GetItemEquipado() const { return ItemEquipado; }
+	void SetItemEquipado(EItemState NuevoItem) { ItemEquipado = NuevoItem; }
 
 public:
 
@@ -104,5 +119,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<class UUserWidget> HUDClass;
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };
 

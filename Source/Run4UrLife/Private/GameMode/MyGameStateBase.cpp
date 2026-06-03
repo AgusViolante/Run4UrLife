@@ -4,7 +4,7 @@
 AMiGameState::AMiGameState()
 {
 	bool bReplicated = true;
-	TiempoCuentaRegresiva = 10;
+	TiempoCuentaRegresiva = 5;
 	bCarreraIniciada = false;
 	bCarreraTerminada = false;
 }

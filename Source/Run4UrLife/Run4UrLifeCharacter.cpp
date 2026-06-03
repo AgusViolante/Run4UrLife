@@ -8,12 +8,15 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Controller.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
+#include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "Run4UrLife.h"
 #include "GameMode/MyGameStateBase.h"
+#include "Kismet/GameplayStatics.h"
 
 ARun4UrLifeCharacter::ARun4UrLifeCharacter()
 {
@@ -68,10 +71,73 @@ void ARun4UrLifeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARun4UrLifeCharacter::Look);
+		
+		EnhancedInputComponent->BindAction(UsarItemAction, ETriggerEvent::Started, this, &ARun4UrLifeCharacter::UsarItemEquipado);
 	}
 	else
 	{
 		UE_LOG(LogRun4UrLife, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+	}
+}
+
+void ARun4UrLifeCharacter::Server_UsarItemEquipado_Implementation()
+{
+	if (ItemEquipado == EItemState::Empty) return;
+	
+	if (ItemEquipado == EItemState::Velocity)
+	{
+		if (GetCharacterMovement())
+		{
+			GetCharacterMovement()->MaxWalkSpeed = 1200.f; // Suma velocidad
+            
+			// Cdura tres segundos
+			FTimerHandle TimerVelocidad;
+			GetWorldTimerManager().SetTimer(TimerVelocidad, [this]()
+			{
+				if (GetCharacterMovement()) GetCharacterMovement()->MaxWalkSpeed = 600.f; // vuevle a 600
+			}, 3.0f, false);
+		}
+	}
+	else if (ItemEquipado == EItemState::Tramp)
+	{
+		
+		TArray<AActor*> ListaPersonajes;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ARun4UrLifeCharacter::StaticClass(), ListaPersonajes);
+
+		for (AActor* ActorRival : ListaPersonajes)
+		{
+			
+			ARun4UrLifeCharacter* Rival = Cast<ARun4UrLifeCharacter>(ActorRival);
+			if (Rival && Rival != this)
+			{
+				
+				if (Rival->GetCharacterMovement())
+				{
+					Rival->GetCharacterMovement()->MaxWalkSpeed = 150.f; // velocidad lenta
+
+					
+					FTimerHandle TimerRalentizacion;
+					GetWorldTimerManager().SetTimer(TimerRalentizacion, [Rival]()
+					{
+						if (Rival && Rival->GetCharacterMovement())
+						{
+							Rival->GetCharacterMovement()->MaxWalkSpeed = 600.f; // velocdiad normal
+						}
+					}, 3.0f, false);
+				}
+				break; 
+			}
+		}
+		
+	}
+	ItemEquipado = EItemState::Empty;
+}
+
+void ARun4UrLifeCharacter::UsarItemEquipado()
+{
+	if (ItemEquipado != EItemState::Empty)
+	{
+		Server_UsarItemEquipado();
 	}
 }
 
@@ -182,4 +248,11 @@ void ARun4UrLifeCharacter::BeginPlay()
 			}
 		}
 	}
+}
+
+void ARun4UrLifeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(ARun4UrLifeCharacter, ItemEquipado);
 }
