@@ -108,6 +108,12 @@ public:
 	
 	EItemState GetItemEquipado() const { return ItemEquipado; }
 	void SetItemEquipado(EItemState NuevoItem) { ItemEquipado = NuevoItem; }
+	
+	UFUNCTION(BlueprintCallable, Category = "Vida")
+	void MorirYReaparecer();
+
+	UFUNCTION(Server, Reliable)
+	void Server_MorirYReaparecer();
 
 public:
 

@@ -8,7 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Controller.h"
-#include "GameFramework/CharacterMovementComponent.h"
+#include "Public/GameMode/MyPlayerState.h"
 #include "GameFramework/PlayerController.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
@@ -247,6 +247,40 @@ void ARun4UrLifeCharacter::BeginPlay()
 				HUD->AddToViewport();
 			}
 		}
+	}
+	if (HasAuthority())
+	{
+		FTimerHandle TimerInicio;
+		GetWorldTimerManager().SetTimer(TimerInicio, [this]()
+		{
+			if (AMiPlayerState* PS = Cast<AMiPlayerState>(GetPlayerState()))
+			{
+				PS->UltimoCheckpoint = GetActorLocation();
+			}
+		}, 0.2f, false);
+	}
+}
+
+void ARun4UrLifeCharacter::MorirYReaparecer()
+{
+	Server_MorirYReaparecer();
+}
+
+void ARun4UrLifeCharacter::Server_MorirYReaparecer_Implementation()
+{
+	if (AMiPlayerState* PS = Cast<AMiPlayerState>(GetPlayerState()))
+	{
+		if (GetCharacterMovement())
+		{
+			GetCharacterMovement()->StopMovementImmediately();
+		}
+		
+		FVector UbicacionRespawn = PS->UltimoCheckpoint + FVector(0.f, 0.f, 100.f);
+		FRotator RotacionRespawn = GetActorRotation(); 
+
+		SetActorLocationAndRotation(UbicacionRespawn, RotacionRespawn, false, nullptr, ETeleportType::TeleportPhysics);
+
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Orange, TEXT("Jugador Reaparecido"));
 	}
 }
 
