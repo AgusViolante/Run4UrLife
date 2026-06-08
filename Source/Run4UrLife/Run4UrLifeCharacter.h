@@ -114,6 +114,9 @@ public:
 
 	UFUNCTION(Server, Reliable)
 	void Server_MorirYReaparecer();
+	
+	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "Carrera|Fin")
+	void Client_EnfocarGanador(AActor* ActorGanador);
 
 public:
 

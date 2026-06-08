@@ -5,6 +5,7 @@
 #include "Public/GameMode/MyPlayerState.h"
 #include "Run4UrLifeCharacter.h"
 #include "TimerManager.h"
+#include "Kismet/GameplayStatics.h"
 
 AMiGameMode::AMiGameMode()
 {
@@ -137,11 +138,47 @@ void AMiGameMode::JugadorLlegoAMeta(AController* PlayerController)
 
 void AMiGameMode::FinalizarCarrera()
 {
-    AMiGameState* GS = GetGameState<AMiGameState>();
-    if (GS)
+    if (AMiGameState* GS = GetGameState<AMiGameState>())
     {
-        GS->bCarreraTerminada = true;
-        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Cyan, TEXT("CARRERA FINALIZADA. Mostrando Podio..."));
+        GS->bCarreraIniciada = false;
         
+        TArray<AActor*> PuntosPodio1;
+        UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Podio1"), PuntosPodio1);
+
+        AActor* SpotGanador = (PuntosPodio1.Num() > 0) ? PuntosPodio1[0] : nullptr;
+
+        // tepea solo al indice 0
+        if (SpotGanador && GS->RankingClasificacion.Num() > 0)
+        {
+            TArray<APlayerState*>::ElementType PS_Ganador = GS->RankingClasificacion[0];
+            if (PS_Ganador)
+            {
+                APawn* PawnGanador = PS_Ganador->GetPawn();
+                if (PawnGanador)
+                {
+                    FVector UbicacionDestino = SpotGanador->GetActorLocation();
+                    FRotator RotacionDestino = SpotGanador->GetActorRotation();
+
+                    // tp al ganador al cubo
+                    PawnGanador->SetActorLocationAndRotation(UbicacionDestino, RotacionDestino, false, nullptr, ETeleportType::TeleportPhysics);
+                }
+            }
+        }
+
+        // Fija las camaras
+        if (SpotGanador)
+        {
+            for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+            {
+                if (APlayerController* PC = It->Get())
+                {
+                    if (ARun4UrLifeCharacter* Char = Cast<ARun4UrLifeCharacter>(PC->GetPawn()))
+                    {
+                        //Enfoca al ganador
+                        Char->Client_EnfocarGanador(SpotGanador);
+                    }
+                }
+            }
+        }
     }
 }

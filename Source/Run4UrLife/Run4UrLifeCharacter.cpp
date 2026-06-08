@@ -8,6 +8,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/Controller.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Public/GameMode/MyPlayerState.h"
 #include "GameFramework/PlayerController.h"
 #include "Net/UnrealNetwork.h"
@@ -264,6 +265,32 @@ void ARun4UrLifeCharacter::BeginPlay()
 void ARun4UrLifeCharacter::MorirYReaparecer()
 {
 	Server_MorirYReaparecer();
+}
+
+void ARun4UrLifeCharacter::Client_EnfocarGanador_Implementation(AActor* ActorGanador)
+{
+	if (!ActorGanador) return;
+
+	APlayerController* PC = Cast<APlayerController>(GetController());
+	if (PC && IsLocallyControlled())
+	{
+		PC->SetIgnoreLookInput(true);
+		
+		FRotator RotacionFinal = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ActorGanador->GetActorLocation());
+		
+		float DistanciaAlPodio = FVector::Dist(GetActorLocation(), ActorGanador->GetActorLocation());
+		
+		if (DistanciaAlPodio < 300.f)
+		{
+			RotacionFinal.Yaw += 90.f; 
+		}
+		else
+		{
+			RotacionFinal.Pitch = 0.f;
+		}
+		
+		PC->SetControlRotation(RotacionFinal);
+	}
 }
 
 void ARun4UrLifeCharacter::Server_MorirYReaparecer_Implementation()
