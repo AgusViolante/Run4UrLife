@@ -20,32 +20,31 @@ AItemBase::AItemBase()
 	
 	ItemState = EItemState::Empty;
 
-
 }
 
 // Called when the game starts or when spawned
 void AItemBase::BeginPlay()
 {
 	Super::BeginPlay();
-	if (HasAuthority())
+	if (HasAuthority() && SphereComponent != nullptr)
 	{
 		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AItemBase::ItemOverlap);
 	}
-	
 }
 
-void AItemBase::ItemOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AItemBase::ItemOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(OtherActor))
-	{
-
-		if (Personaje->GetItemEquipado() == EItemState::Empty)
+	if (HasAuthority() && OtherActor != nullptr && OtherActor != this){
+		if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(OtherActor))
 		{
-			Personaje->SetItemEquipado(ItemState);
-            
 
-			Destroy();
+			if (Personaje->GetItemEquipado() == EItemState::Empty)
+			{
+				Personaje->SetItemEquipado(ItemState);
+	            
+
+				Destroy();
+			}
 		}
 	}
 }

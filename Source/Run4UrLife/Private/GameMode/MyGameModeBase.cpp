@@ -23,6 +23,15 @@ void AMiGameMode::BeginPlay()
 
 void AMiGameMode::ActualizarCuentaRegresiva()
 {
+    if (GetNumPlayers() < 2) //Esperamos que haya 2 jugadores
+    {
+        if (GEngine) 
+        {
+            GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Esperando jugadores... (Mínimo 2 para iniciar)"));
+        }
+        return; 
+    }
+    
     AMiGameState* GS = GetGameState<AMiGameState>();
     if (!GS) return;
 
@@ -68,20 +77,28 @@ void AMiGameMode::IniciarCarrera()
     }
 }
 
-void AMiGameMode::OnPostLogin(APlayerController* NewPlayer)
+void AMiGameMode::OnPostLogin(AController* NewPlayer)
 {
     Super::OnPostLogin(NewPlayer);
 
     AMiGameState* GS = GetGameState<AMiGameState>();
     if (GS && !GS->bCarreraIniciada)
     {
-
         if (APawn* PlayerPawn = NewPlayer->GetPawn())
         {
             if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(PlayerPawn))
             {
                 Personaje->DesactivarMovimiento();
                 if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("Jugador conectado: Congelado esperando el inicio."));
+            }
+        }
+        if (GetNumPlayers() >= 2)
+        {
+            if (!GetWorldTimerManager().IsTimerActive(TimerHandle_CuentaRegresiva))
+            {
+                if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("¡Mínimo de jugadores alcanzado! Iniciando cuenta regresiva..."));
+                
+                GetWorldTimerManager().SetTimer(TimerHandle_CuentaRegresiva, this, &AMiGameMode::ActualizarCuentaRegresiva, 1.0f, true);
             }
         }
     }

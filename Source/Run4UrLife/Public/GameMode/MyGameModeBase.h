@@ -24,7 +24,7 @@ protected:
 	
 	void FinalizarCarrera();
 	
-	virtual void OnPostLogin(APlayerController* NewPlayer);
+	virtual void OnPostLogin(AController* NewPlayer) override;
 
 private:
 	FTimerHandle TimerHandle_CuentaRegresiva;
