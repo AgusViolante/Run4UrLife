@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FGenericCrashContext>
+<RuntimeProperties>
+<CrashVersion>3</CrashVersion>
+<ExecutionGuid>BEEF29BA492ACDFE672F4EBD60AD4768</ExecutionGuid>
+<CrashGUID>UECC-Windows-34120C04423A8E9DFBC33A98F1F0BE9C_0000</CrashGUID>
+<IsEnsure>true</IsEnsure>
+<IsStall>false</IsStall>
+<IsAssert>false</IsAssert>
+<CrashType>Ensure</CrashType>
+<ErrorMessage>Ensure condition failed: InvocationList[ CurFunctionIndex ] != InDelegate  [File:D:\build\++UE5\Sync\Engine\Source\Runtime\Core\Public\UObject\ScriptDelegates.h] [Line: 1025] 
+
+Stack: 
+0x00007ff77c4e2159 Run4UrLife.exe!TMulticastScriptDelegate&lt;FNotThreadSafeDelegateMode&gt;::AddInternal() []
+0x00007ff77c4e1d29 Run4UrLife.exe!FSparseDelegateStorage::Add() []
+0x00007ff783296adc Run4UrLife.exe!TSparseDynamicDelegate&lt;FComponentBeginOverlapSignature_MCSignature,UPrimitiveComponent,FComponentBeginOverlapSignatureInfoGetter&gt;::Add() [C:\Program Files\Epic Games\UE_5.7\Engine\Source\Runtime\CoreUObject\Public\UObject\SparseDelegate.h:261]
+0x00007ff783291e26 Run4UrLife.exe!TSparseDynamicDelegate&lt;FComponentBeginOverlapSignature_MCSignature,UPrimitiveComponent,FComponentBeginOverlapSignatureInfoGetter&gt;::__Internal_AddDynamic&lt;AItemBase&gt;() [C:\Program Files\Epic Games\UE_5.7\Engine\Source\Runtime\CoreUObject\Public\UObject\SparseDelegate.h:378]
+0x00007ff783297bb3 Run4UrLife.exe!AItemBase::BeginPlay() [C:\Users\violanteagus\Desktop\Githubs\Run4UrLife\Source\Run4UrLife\Private\Publicl\Items\ItemBase.cpp:32]
+0x00007ff7816330f0 Run4UrLife.exe!AActor::DispatchBeginPlay() []
+0x00007ff782d93999 Run4UrLife.exe!AWorldSettings::NotifyBeginPlay() []
+0x00007ff781f05e81 Run4UrLife.exe!AGameStateBase::HandleBeginPlay() []
+0x00007ff782c707fd Run4UrLife.exe!UWorld::BeginPlay() []
+0x00007ff782e07fcd Run4UrLife.exe!UEngine::LoadMap() []
+0x00007ff782dc8916 Run4UrLife.exe!UEngine::Browse() []
+0x00007ff782e1c2d2 Run4UrLife.exe!UEngine::TickWorldTravel() []
+0x00007ff781ead07e Run4UrLife.exe!UGameEngine::Tick() []
+0x00007ff78303728c Run4UrLife.exe!FEngineLoop::Tick() []
+0x00007ff7830450bd Run4UrLife.exe!GuardedMain() []
+0x00007ff7830451aa Run4UrLife.exe!GuardedMainWrapper() []
+0x00007ff783047dba Run4UrLife.exe!LaunchWindowsStartup() []
+0x00007ff783053bd4 Run4UrLife.exe!WinMain() []
+0x00007ff7872dad7a Run4UrLife.exe!__scrt_common_main_seh() [D:\a\_work\1\s\src\vctools\crt\vcstartup\src\startup\exe_common.inl:288]
+0x00007ffd76afe957 KERNEL32.DLL!UnknownFunction []
+0x00007ffd7860427c ntdll.dll!UnknownFunction []
+</ErrorMessage>
+<CrashReporterMessage></CrashReporterMessage>
+<CrashReporterMessage>Attended</CrashReporterMessage>
+<ProcessId>21680</ProcessId>
+<SecondsSinceStart>13</SecondsSinceStart>
+<IsInternalBuild>false</IsInternalBuild>
+<IsPerforceBuild>false</IsPerforceBuild>
+<IsWithDebugInfo>false</IsWithDebugInfo>
+<IsSourceDistribution>false</IsSourceDistribution>
+<GameName>UE-Run4UrLife</GameName>
+<ExecutableName>Run4UrLife</ExecutableName>
+<BuildConfiguration>Development</BuildConfiguration>
+<GameSessionID></GameSessionID>
+<PlatformName>Windows</PlatformName>
+<PlatformFullName>Windows</PlatformFullName>
+<PlatformNameIni>Windows</PlatformNameIni>
+<EngineMode>Game</EngineMode>
+<EngineModeEx>Unset</EngineModeEx>
+<DeploymentName></DeploymentName>
+<EngineVersion>5.7.4-51494982+++UE5+Release-5.7</EngineVersion>
+<EngineCompatibleVersion>5.7.4-51494982+++UE5+Release-5.7</EngineCompatibleVersion>
+<CommandLine> Run4UrLife</CommandLine>
+<LanguageLCID>9</LanguageLCID>
+<AppDefaultLocale>es-MX</AppDefaultLocale>
+<BuildVersion>++UE5+Release-5.7-CL-51494982</BuildVersion>
+<Symbols>**UE5*Release-5.7-CL-51494982-Win64-Development</Symbols>
+<IsUERelease>false</IsUERelease>
+<IsRequestingExit>false</IsRequestingExit>
+<UserName></UserName>
+<BaseDir>C:/Users/violanteagus/Desktop/Githubs/Run4UrLife/Buildeano/Windows/Run4UrLife/Binaries/Win64/</BaseDir>
+<RootDir>C:/Users/violanteagus/Desktop/Githubs/Run4UrLife/Buildeano/Windows/</RootDir>
+<MachineId>709199284A812818D949B0B4FFC15673</MachineId>
+<LoginId>709199284a812818d949b0b4ffc15673</LoginId>
+<EpicAccountId>36da5a1bf9754d7ab10898fb0b2d226b</EpicAccountId>
+<SourceContext></SourceContext>
+<UserDescription></UserDescription>
+<UserActivityHint></UserActivityHint>
+<CrashDumpMode>0</CrashDumpMode>
+<GameStateName></GameStateName>
+<Misc.NumberOfCores>6</Misc.NumberOfCores>
+<Misc.NumberOfCoresIncludingHyperthreads>12</Misc.NumberOfCoresIncludingHyperthreads>
+<Misc.Is64bitOperatingSystem>1</Misc.Is64bitOperatingSystem>
+<Misc.CPUVendor>AuthenticAMD</Misc.CPUVendor>
+<Misc.CPUBrand>AMD Ryzen 5 3600 6-Core Processor              </Misc.CPUBrand>
+<Misc.CPUModelID>96016</Misc.CPUModelID>
+<Misc.CPUMicrocodeRevision>141561909</Misc.CPUMicrocodeRevision>
+<Misc.PrimaryGPUBrand>NVIDIA GeForce GTX 1660 SUPER</Misc.PrimaryGPUBrand>
+<Misc.OSVersionMajor>Windows 11 (25H2) [10.0.26200.8457]</Misc.OSVersionMajor>
+<Misc.OSVersionMinor></Misc.OSVersionMinor>
+<Misc.AnticheatProvider></Misc.AnticheatProvider>
+<MemoryStats.TotalPhysical>34265944064</MemoryStats.TotalPhysical>
+<MemoryStats.TotalVirtual>48224587776</MemoryStats.TotalVirtual>
+<MemoryStats.PageSize>4096</MemoryStats.PageSize>
+<MemoryStats.TotalPhysicalGB>32</MemoryStats.TotalPhysicalGB>
+<MemoryStats.AvailablePhysical>22345240576</MemoryStats.AvailablePhysical>
+<MemoryStats.AvailableVirtual>30556823552</MemoryStats.AvailableVirtual>
+<MemoryStats.UsedPhysical>1923272704</MemoryStats.UsedPhysical>
+<MemoryStats.PeakUsedPhysical>1923272704</MemoryStats.PeakUsedPhysical>
+<MemoryStats.UsedVirtual>3609776128</MemoryStats.UsedVirtual>
+<MemoryStats.PeakUsedVirtual>3609821184</MemoryStats.PeakUsedVirtual>
+<MemoryStats.bIsOOM>0</MemoryStats.bIsOOM>
+<MemoryStats.OOMAllocationSize>0</MemoryStats.OOMAllocationSize>
+<MemoryStats.OOMAllocationAlignment>0</MemoryStats.OOMAllocationAlignment>
+<NumMinidumpFramesToIgnore>7</NumMinidumpFramesToIgnore>
+<CallStack></CallStack>
+<PCallStack>
+
+Run4UrLife  0x00007ff77a3a0000 + 2142159         
+Run4UrLife  0x00007ff77a3a0000 + 2141d29         
+Run4UrLife  0x00007ff77a3a0000 + 8ef6adc         
+Run4UrLife  0x00007ff77a3a0000 + 8ef1e26         
+Run4UrLife  0x00007ff77a3a0000 + 8ef7bb3         
+Run4UrLife  0x00007ff77a3a0000 + 72930f0         
+Run4UrLife  0x00007ff77a3a0000 + 89f3999         
+Run4UrLife  0x00007ff77a3a0000 + 7b65e81         
+Run4UrLife  0x00007ff77a3a0000 + 88d07fd         
+Run4UrLife  0x00007ff77a3a0000 + 8a67fcd         
+Run4UrLife  0x00007ff77a3a0000 + 8a28916         
+Run4UrLife  0x00007ff77a3a0000 + 8a7c2d2         
+Run4UrLife  0x00007ff77a3a0000 + 7b0d07e         
+Run4UrLife  0x00007ff77a3a0000 + 8c9728c         
+Run4UrLife  0x00007ff77a3a0000 + 8ca50bd         
+Run4UrLife  0x00007ff77a3a0000 + 8ca51aa         
+Run4UrLife  0x00007ff77a3a0000 + 8ca7dba         
+Run4UrLife  0x00007ff77a3a0000 + 8cb3bd4         
+Run4UrLife  0x00007ff77a3a0000 + cf3ad7a         
+KERNEL32    0x00007ffd76ad0000 + 2e957           
+</PCallStack>
+<PCallStackHash>D9CD65751293D13AAFF43EC099F36F143C3329BF</PCallStackHash>
+</RuntimeProperties>
+<PlatformProperties>
+<PlatformIsRunningWindows>1</PlatformIsRunningWindows>
+<PlatformIsRunningWine>false</PlatformIsRunningWine>
+<PlatformSupportsWindows11>true</PlatformSupportsWindows11>
+<IsRunningOnBattery>false</IsRunningOnBattery>
+<IsUsingBatterySaver>false</IsUsingBatterySaver>
+<PlatformCallbackResult>0</PlatformCallbackResult>
+<CrashTrigger>0</CrashTrigger>
+</PlatformProperties>
+<EngineData>
+<MatchingDPStatus>WindowsNo errors</MatchingDPStatus>
+<RHI.IntegratedGPU>false</RHI.IntegratedGPU>
+<RHI.DriverDenylisted>false</RHI.DriverDenylisted>
+<RHI.D3DDebug>false</RHI.D3DDebug>
+<RHI.DRED>false</RHI.DRED>
+<RHI.DREDMarkersOnly>false</RHI.DREDMarkersOnly>
+<RHI.DREDContext>false</RHI.DREDContext>
+<RHI.Aftermath>true</RHI.Aftermath>
+<RHI.RHIName>D3D12</RHI.RHIName>
+<RHI.AdapterName>NVIDIA GeForce GTX 1660 SUPER</RHI.AdapterName>
+<RHI.UserDriverVersion>596.21</RHI.UserDriverVersion>
+<RHI.InternalDriverVersion>32.0.15.9621</RHI.InternalDriverVersion>
+<RHI.DriverDate>4-13-2026</RHI.DriverDate>
+<RHI.FeatureLevel>SM6</RHI.FeatureLevel>
+<RHI.GPUVendor>NVIDIA</RHI.GPUVendor>
+<RHI.DeviceId>21C4</RHI.DeviceId>
+<DeviceProfile.Name>Windows</DeviceProfile.Name>
+<Platform.AppHasFocus>true</Platform.AppHasFocus>
+<NumClients>0</NumClients>
+<ReplicationModel>Generic</ReplicationModel>
+</EngineData>
+<GameData>
+</GameData>
+</FGenericCrashContext>
