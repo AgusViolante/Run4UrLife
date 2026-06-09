@@ -44,5 +44,8 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Configuración")
+	int32 CantidadAOtorgar = 1;
 
 };

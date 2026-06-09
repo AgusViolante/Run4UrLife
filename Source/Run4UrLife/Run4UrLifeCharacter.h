@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/RecogiblesInterface.h"
 #include "Public/Publicl/Items/ItemBase.h"
 #include "Logging/LogMacros.h"
 #include "Run4UrLifeCharacter.generated.h"
@@ -20,7 +21,7 @@ DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
  *  Implements a controllable orbiting camera
  */
 UCLASS(abstract)
-class ARun4UrLifeCharacter : public ACharacter
+class ARun4UrLifeCharacter : public ACharacter, public IRecogiblesInterface
 {
 	GENERATED_BODY()
 
@@ -66,10 +67,15 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Items")
 	EItemState ItemEquipado;
 	
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Inventario")
+	EItemState ItemActual;
+	
 	void UsarItemEquipado();
 	
 	UFUNCTION(Server, Reliable)
 	void Server_UsarItemEquipado();
+	
+	virtual void RecibirObjeto(EItemState NuevoEstado, int32 Cantidad) override;
 
 protected:
 
@@ -97,13 +103,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
 	
-	// Función para congelar al jugador
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void DesactivarMovimiento();
-
-	// Función para descongelar al jugador
+	
 	UFUNCTION(BlueprintCallable, Category="Input")
 	void ActivarMovimiento();
+	
 	void BeginPlay();
 	
 	EItemState GetItemEquipado() const { return ItemEquipado; }
@@ -117,6 +122,13 @@ public:
 	
 	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "Carrera|Fin")
 	void Client_EnfocarGanador(AActor* ActorGanador);
+	
+	UPROPERTY(ReplicatedUsing = OnRep_CantidadItems, BlueprintReadOnly, Category = "Inventario")
+	int32 CantidadItems = 0;
+
+	UFUNCTION()
+	void OnRep_CantidadItems();
+	
 
 public:
 
@@ -130,5 +142,6 @@ public:
 	TSubclassOf<class UUserWidget> HUDClass;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
 };
 

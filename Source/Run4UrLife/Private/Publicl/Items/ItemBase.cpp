@@ -2,6 +2,7 @@
 
 
 #include "Publicl/Items/ItemBase.h"
+#include "Interfaces/RecogiblesInterface.h"
 #include "Run4UrLifeCharacter.h"
 
 // Sets default values
@@ -34,17 +35,15 @@ void AItemBase::BeginPlay()
 
 void AItemBase::ItemOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (HasAuthority() && OtherActor != nullptr && OtherActor != this){
-		if (ARun4UrLifeCharacter* Personaje = Cast<ARun4UrLifeCharacter>(OtherActor))
+	if (HasAuthority() && OtherActor != nullptr)
+	{
+		IRecogiblesInterface* InterfazAgarrar = Cast<IRecogiblesInterface>(OtherActor);
+
+		if (InterfazAgarrar != nullptr)
 		{
+			InterfazAgarrar->RecibirObjeto(ItemState, CantidadAOtorgar);
 
-			if (Personaje->GetItemEquipado() == EItemState::Empty)
-			{
-				Personaje->SetItemEquipado(ItemState);
-	            
-
-				Destroy();
-			}
+			Destroy(); 
 		}
 	}
 }

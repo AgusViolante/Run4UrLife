@@ -11,6 +11,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Public/GameMode/MyPlayerState.h"
 #include "GameFramework/PlayerController.h"
+#include "Public/Publicl/Items/ItemBase.h"
 #include "Net/UnrealNetwork.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -136,10 +137,62 @@ void ARun4UrLifeCharacter::Server_UsarItemEquipado_Implementation()
 
 void ARun4UrLifeCharacter::UsarItemEquipado()
 {
-	if (ItemEquipado != EItemState::Empty)
+	if (!HasAuthority()) return;
+	
+	if (CantidadItems <= 0 || ItemActual == EItemState::Empty) return;
+	if (ItemActual == EItemState::Velocity)
 	{
-		Server_UsarItemEquipado();
+		if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+		{
+			MoveComp->MaxWalkSpeed = 1000.f;
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("¡Activaste Velocidad!"));
+		}
 	}
+	else if (ItemActual == EItemState::Tramp)
+	{
+		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+		{
+			if (APlayerController* PC = It->Get())
+			{
+				if (PC != GetController())
+				{
+					if (APawn* RivalPawn = PC->GetPawn())
+					{
+						if (ACharacter* RivalChar = Cast<ACharacter>(RivalPawn))
+						{
+							if (UCharacterMovementComponent* RivalMove = RivalChar->GetCharacterMovement())
+							{
+								RivalMove->MaxWalkSpeed = 200.f;
+								if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡Ralentizaste al rival!"));
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	CantidadItems--;
+
+	if (CantidadItems <= 0)
+	{
+		ItemActual = EItemState::Empty;
+		CantidadItems = 0;
+	}
+}
+
+void ARun4UrLifeCharacter::RecibirObjeto(EItemState NuevoEstado, int32 Cantidad)
+{
+	if (!HasAuthority()) return;
+
+	
+	if (ItemActual != NuevoEstado)
+	{
+		ItemActual = NuevoEstado;
+		CantidadItems = 0; 
+	}
+
+	CantidadItems += Cantidad;
 }
 
 void ARun4UrLifeCharacter::Move(const FInputActionValue& Value)
@@ -265,6 +318,10 @@ void ARun4UrLifeCharacter::BeginPlay()
 void ARun4UrLifeCharacter::MorirYReaparecer()
 {
 	Server_MorirYReaparecer();
+}
+
+void ARun4UrLifeCharacter::OnRep_CantidadItems()
+{
 }
 
 void ARun4UrLifeCharacter::Client_EnfocarGanador_Implementation(AActor* ActorGanador)
