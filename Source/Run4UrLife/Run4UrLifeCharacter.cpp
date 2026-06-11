@@ -135,51 +135,6 @@ void ARun4UrLifeCharacter::Server_UsarItemEquipado_Implementation()
 	ItemEquipado = EItemState::Empty;
 }
 
-void ARun4UrLifeCharacter::UsarItemEquipado()
-{
-	if (!HasAuthority()) return;
-	
-	if (CantidadItems <= 0 || ItemActual == EItemState::Empty) return;
-	if (ItemActual == EItemState::Velocity)
-	{
-		if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
-		{
-			MoveComp->MaxWalkSpeed = 1000.f;
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("¡Activaste Velocidad!"));
-		}
-	}
-	else if (ItemActual == EItemState::Tramp)
-	{
-		for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
-		{
-			if (APlayerController* PC = It->Get())
-			{
-				if (PC != GetController())
-				{
-					if (APawn* RivalPawn = PC->GetPawn())
-					{
-						if (ACharacter* RivalChar = Cast<ACharacter>(RivalPawn))
-						{
-							if (UCharacterMovementComponent* RivalMove = RivalChar->GetCharacterMovement())
-							{
-								RivalMove->MaxWalkSpeed = 200.f;
-								if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡Ralentizaste al rival!"));
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	CantidadItems--;
-
-	if (CantidadItems <= 0)
-	{
-		ItemActual = EItemState::Empty;
-		CantidadItems = 0;
-	}
-}
 
 void ARun4UrLifeCharacter::RecibirObjeto(EItemState NuevoEstado, int32 Cantidad)
 {
@@ -322,6 +277,79 @@ void ARun4UrLifeCharacter::MorirYReaparecer()
 
 void ARun4UrLifeCharacter::OnRep_CantidadItems()
 {
+}
+
+void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
+{
+    if (CantidadItems <= 0 || ItemActual == EItemState::Empty) return;
+	
+    if (ItemActual == EItemState::Velocity)
+    {
+        if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
+        {
+            MoveComp->MaxWalkSpeed = 1000.f; 
+
+            if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("¡Boost de velocidad activado por 5 segundos!"));
+
+            
+            FTimerHandle Timer_Velocidad;
+            GetWorld()->GetTimerManager().SetTimer(Timer_Velocidad, [this, MoveComp]()
+            {
+                if (MoveComp)
+                {
+                    MoveComp->MaxWalkSpeed = 600.f; 
+                    if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White, TEXT("Tu boost terminó."));
+                }
+            }, 5.0f, false); 
+        }
+    }
+  
+    else if (ItemActual == EItemState::Tramp)
+    {
+        
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            if (APlayerController* PC = It->Get())
+            {
+                if (PC != GetController()) // Si es el rival
+                {
+                    if (APawn* RivalPawn = PC->GetPawn())
+                    {
+                        if (ACharacter* RivalChar = Cast<ACharacter>(RivalPawn))
+                        {
+                            if (UCharacterMovementComponent* RivalMove = RivalChar->GetCharacterMovement())
+                            {
+                                RivalMove->MaxWalkSpeed = 200.f; 
+
+                                if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡Rival ralentizado por 4 segundos!"));
+
+                                
+                                FTimerHandle Timer_Trampa;
+                                GetWorld()->GetTimerManager().SetTimer(Timer_Trampa, [RivalMove]()
+                                {
+                                    if (RivalMove)
+                                    {
+                                        RivalMove->MaxWalkSpeed = 600.f; 
+                                        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White, TEXT("El rival recuperó su velocidad."));
+                                    }
+                                }, 4.0f, false); 
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+   
+    CantidadItems--;
+
+    
+    if (CantidadItems <= 0)
+    {
+        ItemActual = EItemState::Empty;
+        CantidadItems = 0;
+    }
 }
 
 void ARun4UrLifeCharacter::Client_EnfocarGanador_Implementation(AActor* ActorGanador)

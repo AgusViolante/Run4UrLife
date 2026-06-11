@@ -70,7 +70,6 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = "Inventario")
 	EItemState ItemActual;
 	
-	void UsarItemEquipado();
 	
 	UFUNCTION(Server, Reliable)
 	void Server_UsarItemEquipado();
@@ -128,6 +127,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_CantidadItems();
+	
+	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventario")
+	void UsarItemEquipado();
 	
 
 public:
