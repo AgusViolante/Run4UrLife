@@ -6,8 +6,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/SphereComponent.h"
 #include "ItemBase.generated.h"
+
+class USphereComponent;
+class UStaticMeshComponent;
 
 UENUM(BlueprintType)
 enum class EItemState : uint8
@@ -31,10 +33,10 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Component")
-	USphereComponent* SphereComponent;
+	TObjectPtr<USphereComponent> SphereComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Component")
-	UStaticMeshComponent* MeshComponent;
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	EItemState ItemState;

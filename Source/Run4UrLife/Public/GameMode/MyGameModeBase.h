@@ -4,6 +4,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "MyGameModeBase.generated.h"
 
+class AController;
+
 UCLASS()
 class RUN4URLIFE_API AMiGameMode : public AGameModeBase
 {
@@ -25,6 +27,12 @@ protected:
 	void FinalizarCarrera();
 	
 	virtual void OnPostLogin(AController* NewPlayer) override;
+	
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UUserWidget> RaceHUDWidgetClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Carrera")
+	bool CantidadJugadores = false;
 
 private:
 	FTimerHandle TimerHandle_CuentaRegresiva;

@@ -12,6 +12,8 @@
 class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
+class UUserWidget;
+enum class EItemState : uint8;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -122,6 +124,9 @@ public:
 	UFUNCTION(Client, Reliable, BlueprintCallable, Category = "Carrera|Fin")
 	void Client_EnfocarGanador(AActor* ActorGanador);
 	
+	UFUNCTION(BlueprintImplementableEvent, Category = "Inventario")
+	void BP_OnCantidadItemsCambiada(int32 NuevaCantidad);
+	
 	UPROPERTY(ReplicatedUsing = OnRep_CantidadItems, BlueprintReadOnly, Category = "Inventario")
 	int32 CantidadItems = 0;
 
@@ -130,6 +135,7 @@ public:
 	
 	UFUNCTION(Server, Reliable, BlueprintCallable, Category = "Inventario")
 	void UsarItemEquipado();
+
 	
 
 public:

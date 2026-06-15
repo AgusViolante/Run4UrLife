@@ -4,6 +4,7 @@
 #include "Public/GameMode/MyGameStateBase.h"
 #include "Public/GameMode/MyPlayerState.h"
 #include "Run4UrLifeCharacter.h"
+#include "Blueprint/UserWidget.h"
 #include "TimerManager.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -20,18 +21,29 @@ void AMiGameMode::BeginPlay()
 
     // empieza el timer para que arranque la carrera
     GetWorldTimerManager().SetTimer(TimerHandle_CuentaRegresiva, this, &AMiGameMode::ActualizarCuentaRegresiva, 1.0f, true);
+    
+    APlayerController* LocalPC = GEngine->GetFirstLocalPlayerController(GetWorld());
+    if (LocalPC && RaceHUDWidgetClass)
+    {
+        UUserWidget* HUD = CreateWidget<UUserWidget>(LocalPC, RaceHUDWidgetClass);
+        if (HUD)
+        {
+            HUD->AddToViewport();
+        }
+    }
 }
 
 void AMiGameMode::ActualizarCuentaRegresiva()
 {
-    /*if (GetNumPlayers() < 2) //Esperamos que haya 2 jugadores
+    if (GetNumPlayers() < 2) //Esperamos que haya 2 jugadores
     {
+        CantidadJugadores = true;
         if (GEngine) 
         {
             GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, TEXT("Esperando jugadores... (Mínimo 2 para iniciar)"));
         }
         return; 
-    }*/
+    }
     
     AMiGameState* GS = GetGameState<AMiGameState>();
     if (!GS) return;
@@ -164,7 +176,7 @@ void AMiGameMode::FinalizarCarrera()
         TArray<AActor*> PuntosPodio1;
         UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Podio1"), PuntosPodio1);
 
-        // Buscamos tu nuevo Target Point de perdedores
+
         TArray<AActor*> PuntosLoosers;
         UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("Loosers"), PuntosLoosers);
 
@@ -181,7 +193,7 @@ void AMiGameMode::FinalizarCarrera()
                     APawn* PawnJugador = PS_Jugador->GetPawn();
                     if (PawnJugador)
                     {
-                        // IMPORTANTE: Frenamos al personaje en el servidor para que acepte el TP sin laguear
+
                         if (ACharacter* Char = Cast<ACharacter>(PawnJugador))
                         {
                             if (UCharacterMovementComponent* MoveComp = Char->GetCharacterMovement())
@@ -191,17 +203,16 @@ void AMiGameMode::FinalizarCarrera()
                             }
                         }
 
-                        // === JUGADOR 1: Va al spot del Ganador ===
                         if (i == 0)
                         {
                             FVector UbicacionDestino = SpotGanador->GetActorLocation();
                             FRotator RotacionDestino = SpotGanador->GetActorRotation();
                             PawnJugador->SetActorLocationAndRotation(UbicacionDestino, RotacionDestino, false, nullptr, ETeleportType::TeleportPhysics);
                         }
-                        // === RESTO DE JUGADORES: Van al Target Point "Loosers" ===
+
                         else
                         {
-                            // Si encontrás el punto de perdedores lo mandás ahí, si no, al del ganador como auxilio
+
                             AActor* SpotDestinoFinal = SpotPerdedores ? SpotPerdedores : SpotGanador;
                             
                             if (SpotDestinoFinal)
@@ -209,8 +220,6 @@ void AMiGameMode::FinalizarCarrera()
                                 FVector UbicacionDestino = SpotDestinoFinal->GetActorLocation();
                                 FRotator RotacionDestino = SpotDestinoFinal->GetActorRotation();
 
-                                // Los desfasamos un poquito hacia el costado (RightVector) de tu Target Point 
-                                // para que no aparezcan uno adentro del otro si hay más de un perdedor
                                 UbicacionDestino += SpotDestinoFinal->GetActorRightVector() * (i * 120.f);
 
                                 PawnJugador->SetActorLocationAndRotation(UbicacionDestino, RotacionDestino, false, nullptr, ETeleportType::TeleportPhysics);
@@ -221,7 +230,7 @@ void AMiGameMode::FinalizarCarrera()
             }
         }
 
-        // Fija las camaras (Tu lógica original intacta)
+
         if (SpotGanador)
         {
             for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
@@ -230,18 +239,17 @@ void AMiGameMode::FinalizarCarrera()
                 {
                     if (ARun4UrLifeCharacter* Char = Cast<ARun4UrLifeCharacter>(PC->GetPawn()))
                     {
-                        // Buscamos si este personaje es el ganador (comparando con el índice 0 del ranking)
+
                         bool bEsElGanador = (GS->RankingClasificacion.Num() > 0 && GS->RankingClasificacion[0]->GetPawn() == Char);
 
                         if (bEsElGanador)
                         {
-                            // El ganador usa tu enfoque original normal
+
                             Char->Client_EnfocarGanador(SpotGanador);
                         }
                         else
                         {
-                            // Los perdedores enfocan al spot de perdedores (que mira al podio) 
-                            // o al revés para forzar el giro de 180 grados
+
                             AActor* EnfoquePerdedor = SpotPerdedores ? SpotPerdedores : SpotGanador;
                             Char->Client_EnfocarGanador(EnfoquePerdedor);
                         }

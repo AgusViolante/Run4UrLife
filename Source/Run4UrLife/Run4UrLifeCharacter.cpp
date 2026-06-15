@@ -74,6 +74,7 @@ void ARun4UrLifeCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInpu
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARun4UrLifeCharacter::Look);
 		
+		//UsingObject
 		EnhancedInputComponent->BindAction(UsarItemAction, ETriggerEvent::Started, this, &ARun4UrLifeCharacter::UsarItemEquipado);
 	}
 	else
@@ -222,7 +223,7 @@ void ARun4UrLifeCharacter::DoJumpEnd()
 
 void ARun4UrLifeCharacter::DesactivarMovimiento()
 {
-	APlayerController* PC = Cast<APlayerController>(GetController());
+	TObjectPtr<APlayerController> PC = Cast<APlayerController>(GetController());
 	if (PC)
 	{
 		
@@ -233,7 +234,7 @@ void ARun4UrLifeCharacter::DesactivarMovimiento()
 
 void ARun4UrLifeCharacter::ActivarMovimiento()
 {
-	APlayerController* PC = Cast<APlayerController>(GetController());
+	TObjectPtr<APlayerController> PC = Cast<APlayerController>(GetController());
 	if (PC)
 	{
 		
@@ -277,6 +278,7 @@ void ARun4UrLifeCharacter::MorirYReaparecer()
 
 void ARun4UrLifeCharacter::OnRep_CantidadItems()
 {
+	BP_OnCantidadItemsCambiada(CantidadItems);
 }
 
 void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
@@ -288,9 +290,6 @@ void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
         if (UCharacterMovementComponent* MoveComp = GetCharacterMovement())
         {
             MoveComp->MaxWalkSpeed = 1000.f; 
-
-            if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Green, TEXT("¡Boost de velocidad activado por 5 segundos!"));
-
             
             FTimerHandle Timer_Velocidad;
             GetWorld()->GetTimerManager().SetTimer(Timer_Velocidad, [this, MoveComp]()
@@ -298,7 +297,7 @@ void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
                 if (MoveComp)
                 {
                     MoveComp->MaxWalkSpeed = 600.f; 
-                    if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White, TEXT("Tu boost terminó."));
+                    
                 }
             }, 5.0f, false); 
         }
@@ -311,7 +310,7 @@ void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
         {
             if (APlayerController* PC = It->Get())
             {
-                if (PC != GetController()) // Si es el rival
+                if (PC != GetController()) 
                 {
                     if (APawn* RivalPawn = PC->GetPawn())
                     {
@@ -320,9 +319,6 @@ void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
                             if (UCharacterMovementComponent* RivalMove = RivalChar->GetCharacterMovement())
                             {
                                 RivalMove->MaxWalkSpeed = 200.f; 
-
-                                if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Red, TEXT("¡Rival ralentizado por 4 segundos!"));
-
                                 
                                 FTimerHandle Timer_Trampa;
                                 GetWorld()->GetTimerManager().SetTimer(Timer_Trampa, [RivalMove]()
@@ -330,7 +326,7 @@ void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
                                     if (RivalMove)
                                     {
                                         RivalMove->MaxWalkSpeed = 600.f; 
-                                        if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::White, TEXT("El rival recuperó su velocidad."));
+                                        
                                     }
                                 }, 4.0f, false); 
                             }
@@ -350,6 +346,10 @@ void ARun4UrLifeCharacter::UsarItemEquipado_Implementation()
         ItemActual = EItemState::Empty;
         CantidadItems = 0;
     }
+	if (HasAuthority())
+	{
+		BP_OnCantidadItemsCambiada(CantidadItems);
+	}
 }
 
 void ARun4UrLifeCharacter::Client_EnfocarGanador_Implementation(AActor* ActorGanador)
@@ -401,4 +401,6 @@ void ARun4UrLifeCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(ARun4UrLifeCharacter, ItemEquipado);
+	DOREPLIFETIME(ARun4UrLifeCharacter, ItemActual); 
+	DOREPLIFETIME(ARun4UrLifeCharacter, CantidadItems);
 }

@@ -3,6 +3,8 @@
 
 #include "Publicl/Items/ItemBase.h"
 #include "Interfaces/RecogiblesInterface.h"
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Run4UrLifeCharacter.h"
 
 // Sets default values
